@@ -1,5 +1,5 @@
 //
-//  CRAPIMediaScreenshotImage.swift
+//  CRAPIImage.swift
 //  
 //
 //  Created by HG on 2020/12/14.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct CRAPIMediaScreenshotImage: Codable {
+public struct CRAPIImage: Codable {
     public let thumb_url: String
     public let small_url: String
     public let medium_url: String

@@ -19,7 +19,7 @@ public struct CRAPIMedia: Codable, Identifiable {
     public let episodeNumber: String?
     public let name: String?
     public let description: String?
-    public let screenshotImage: CRAPIMediaScreenshotImage?
+    public let screenshotImage: CRAPIImage?
     public let bifUrl: String?
     public let url: String?
     public let clip: Bool?

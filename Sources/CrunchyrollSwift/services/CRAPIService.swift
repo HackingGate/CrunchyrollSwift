@@ -17,9 +17,11 @@ public struct CRAPIService {
         case networkError(error: Error)
     }
     public enum Endpoint {
-        case listCollections, listMedia, info
+        case autocomplete, listCollections, listMedia, info
         func path() -> String {
             switch self {
+            case .autocomplete:
+                return "autocomplete.0.json"
             case .listCollections:
                 return "list_collections.0.json"
             case .listMedia:
