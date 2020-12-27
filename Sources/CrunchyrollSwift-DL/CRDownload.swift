@@ -4,7 +4,7 @@ import CrunchyrollSwift
 
 struct CRDownload: ParsableCommand {
     @Option(name: .shortAndLong, help: "Use the USA library of Crunchyroll.")
-    var unblocked: Bool = false
+    var unblocked: Bool = true
     
     @Argument(help: "The URLs to download.")
     var urls: [String]
@@ -19,16 +19,15 @@ struct CRDownload: ParsableCommand {
 
 extension CRDownload {
     func getSession() {
-        CRUnblockerService.shared.GET(
-            endpoint: .startSession,
+        CRAPIService.shared.GET(
+            endpoint: unblocked ? .startUSSession : .startSession,
             params: nil)
         {
-            (result: Result<CRUnblockerResponse<CRUnblockerStartSession>, CRUnblockerService.APIError>) in
+            (result: Result<CRAPIResponse<CRAPIStartSession>, CRAPIService.APIError>) in
             switch result {
             case let .success(response):
                 print(response)
             case .failure(_):
-                print("fail")
                 break
             }
             semaphore.signal()

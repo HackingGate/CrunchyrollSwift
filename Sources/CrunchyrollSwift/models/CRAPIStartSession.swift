@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct CRUnblockerStartSession: Codable, Identifiable {
+public struct CRAPIStartSession: Codable, Identifiable {
     public let id: String // session_id
     public let countryCode: String?
     public let ip: String?
