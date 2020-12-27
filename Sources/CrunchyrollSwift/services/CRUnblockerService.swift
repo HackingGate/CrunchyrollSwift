@@ -6,6 +6,9 @@
 //
 
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 public struct CRUnblockerService {
     let baseURL = URL(string: "https://cr-unblocker.us.to")!
@@ -39,29 +42,21 @@ public struct CRUnblockerService {
         request.httpMethod = "GET"
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             guard let data = data else {
-                DispatchQueue.main.async {
-                    completionHandler(.failure(.noResponse))
-                }
+                completionHandler(.failure(.noResponse))
                 return
             }
             guard error == nil else {
-                DispatchQueue.main.async {
-                    completionHandler(.failure(.networkError(error: error!)))
-                }
+                completionHandler(.failure(.networkError(error: error!)))
                 return
             }
             do {
                 let object = try self.decoder.decode(T.self, from: data)
-                DispatchQueue.main.async {
-                    completionHandler(.success(object))
-                }
+                completionHandler(.success(object))
             } catch let error {
-                DispatchQueue.main.async {
-                    #if DEBUG
-                    print("JSON Decoding Error: \(error)")
-                    #endif
-                    completionHandler(.failure(.jsonDecodingError(error: error)))
-                }
+                #if DEBUG
+                print("JSON Decoding Error: \(error)")
+                #endif
+                completionHandler(.failure(.jsonDecodingError(error: error)))
             }
         }
         task.resume()
