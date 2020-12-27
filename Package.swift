@@ -13,11 +13,19 @@ let package = Package(
         .library(
             name: "CrunchyrollSwiftWeb",
             targets: ["CrunchyrollSwiftWeb"]),
+        .executable(
+            name: "crunchyrollswift-dl",
+            targets: ["CrunchyrollSwift-DL"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/tid-kijyun/Kanna", "5.2.2"..<"6.0.0")
+        .package(
+            url: "https://github.com/tid-kijyun/Kanna",
+            from: "5.2.0"),
+        .package(
+            url: "https://github.com/apple/swift-argument-parser",
+            from: "0.3.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -30,6 +38,14 @@ let package = Package(
             name: "CrunchyrollSwiftWeb",
             dependencies: ["Kanna"],
             path: "Sources/CrunchyrollSwiftWeb"),
+        .target(
+            name: "CrunchyrollSwift-DL",
+            dependencies: [
+                .product(
+                    name: "ArgumentParser",
+                    package: "swift-argument-parser"),
+            ],
+            path: "Sources/CrunchyrollSwift-DL"),
         .testTarget(
             name: "CrunchyrollSwiftTests",
             dependencies: ["CrunchyrollSwift"]),
