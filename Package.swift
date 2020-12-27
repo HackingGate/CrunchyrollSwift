@@ -44,6 +44,8 @@ let package = Package(
                 .product(
                     name: "ArgumentParser",
                     package: "swift-argument-parser"),
+                "CrunchyrollSwift",
+                "CrunchyrollSwiftWeb",
             ],
             path: "Sources/CrunchyrollSwift-DL"),
         .testTarget(
