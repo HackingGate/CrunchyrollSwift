@@ -39,13 +39,30 @@ struct CRCommandFlow {
         }
     }
     
-    static func getStream(_ sessionId: String, _ mediaId: Int) -> URL? {
-        if let info = CRAPIHelper.getInfo(sessionId, mediaId),
-           let streamData = info.streamData,
+    static func getStream(_ sessionId: String, _ info: CRAPIMedia) -> URL? {
+        if let streamData = info.streamData,
            let adaptive = streamData.streams.last(where: { $0.quality == "adaptive" }) ?? streamData.streams.last,
            let url = URL(string: adaptive.url) {
             return url
         }
         return nil
+    }
+    
+    static func downloadStream(_ url: URL, name: String) {
+        let youtubeDL = shell("which", "youtube-dl")
+        if youtubeDL == 0 {
+            _ = shell("youtube-dl", "-o \(name.count > 0 ? name : UUID().uuidString).%(ext)s", "--all-subs", url.absoluteString)
+        } else {
+            print("youtube-dl not found")
+        }
+    }
+    
+    static func shell(_ args: String...) -> Int32 {
+        let task = Process()
+        task.launchPath = "/usr/bin/env"
+        task.arguments = args
+        task.launch()
+        task.waitUntilExit()
+        return task.terminationStatus
     }
 }

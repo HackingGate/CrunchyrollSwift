@@ -5,7 +5,7 @@ import CrunchyrollSwiftWeb
 
 struct CRDownload: ParsableCommand {
     @Option(name: .shortAndLong, help: "Use the USA library of Crunchyroll.")
-    var unblocked: Bool = true
+    var unblocked: Bool = false
     
     @Argument(help: "The URLs to download.")
     var urls: [String]
@@ -21,18 +21,21 @@ struct CRDownload: ParsableCommand {
                     if let seriesId = CRWebParser.seriesId(url) {
                         if let selectedCollection = CRCommandFlow.selectCollection(sessionId, seriesId) {
                             guard let selectedCollectionId = Int(selectedCollection.id) else {
-                                print("Collection id is invaildate")
+                                print("Collection id is invaild")
                                 continue
                             }
                             if let selectedEpisode = CRCommandFlow.selectEpisode(sessionId, selectedCollectionId) {
                                 guard let selectedMediaId = Int(selectedEpisode.id) else {
-                                    print("Episode id is invaildate")
+                                    print("Episode id is invaild")
                                     continue
                                 }
-                                if let stream = CRCommandFlow.getStream(sessionId, selectedMediaId) {
-                                    print("m3u8 is \(stream)")
-                                } else {
-                                    print("Unable to get m3u8 from media_id \(selectedMediaId)")
+                                if let info = CRAPIHelper.getInfo(sessionId, selectedMediaId) {
+                                    if let stream = CRCommandFlow.getStream(sessionId, info) {
+                                        print("m3u8 is \(stream)")
+                                        CRCommandFlow.downloadStream(stream, name: "EP\(info.episodeNumber ?? "") - \(info.name ?? "")")
+                                    } else {
+                                        print("Unable to get m3u8 from media_id \(selectedMediaId)")
+                                    }
                                 }
                             }
                         }
@@ -41,10 +44,13 @@ struct CRDownload: ParsableCommand {
                     }
                 } else if parsed.type == .episode {
                     if let mediaId = Int(parsed.matches[4]) {
-                        if let stream = CRCommandFlow.getStream(sessionId, mediaId) {
-                            print("m3u8 is \(stream)")
-                        } else {
-                            print("Unable to get m3u8 from media_id \(mediaId)")
+                        if let info = CRAPIHelper.getInfo(sessionId, mediaId) {
+                            if let stream = CRCommandFlow.getStream(sessionId, info) {
+                                print("m3u8 is \(stream)")
+                                CRCommandFlow.downloadStream(stream, name: "EP\(info.episodeNumber ?? "") - \(info.name ?? "")")
+                            } else {
+                                print("Unable to get m3u8 from media_id \(mediaId)")
+                            }
                         }
                     } else {
                         print("Cannot read media_id")

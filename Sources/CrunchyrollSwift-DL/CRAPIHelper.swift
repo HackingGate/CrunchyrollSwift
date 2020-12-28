@@ -105,7 +105,7 @@ struct CRAPIHelper {
     static func getInfo(
         _ sessionId: String,
         _ mediaId: Int,
-        _ fields: [CRAPIMedia.CodingKeys] = [.id, .streamData]
+        _ fields: [CRAPIMedia.CodingKeys] = [.id, .streamData, .name, .episodeNumber]
     ) -> CRAPIMedia? {
         let params = [
             "session_id": sessionId,

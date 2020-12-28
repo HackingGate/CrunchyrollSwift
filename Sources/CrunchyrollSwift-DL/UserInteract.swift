@@ -22,7 +22,7 @@ struct UserInteract {
                 continue
             }
             if (!range.contains(choise)) {
-                print("Choise is not in range \(range)")
+                print("Choice is not in range \(range)")
                 continue
             }
             validateChoise = choise
