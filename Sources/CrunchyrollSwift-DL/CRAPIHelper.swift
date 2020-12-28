@@ -1,5 +1,5 @@
 //
-//  CRDownloadExtension.swift
+//  CRAPIHelper.swift
 //  
 //
 //  Created by HG on 2020/12/28.
@@ -9,8 +9,10 @@ import Foundation
 import CrunchyrollSwift
 import CrunchyrollSwiftWeb
 
-extension CRDownload {
-    func getSession() -> String? {
+struct CRAPIHelper {
+    static func getSession(
+        _ unblocked: Bool
+    ) -> String? {
         var sessionId: String?
         CRAPIService.shared.GET(
             endpoint: unblocked ? .startUSSession : .startSession,
@@ -36,7 +38,7 @@ extension CRDownload {
         return sessionId
     }
     
-    func getCollections(
+    static func getCollections(
         _ sessionId: String,
         _ seriesId: Int
     ) -> [CRAPICollection]? {
@@ -67,7 +69,7 @@ extension CRDownload {
         return crAPICollections
     }
     
-    func getMedias(
+    static func getMedias(
         _ sessionId: String,
         _ collectionId: Int,
         _ fields: [CRAPIMedia.CodingKeys] = [.id, .name]
@@ -100,7 +102,7 @@ extension CRDownload {
         return crAPIMedias
     }
     
-    func getInfo(
+    static func getInfo(
         _ sessionId: String,
         _ mediaId: Int,
         _ fields: [CRAPIMedia.CodingKeys] = [.id, .streamData]

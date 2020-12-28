@@ -11,7 +11,7 @@ struct CRDownload: ParsableCommand {
     var urls: [String]
 
     mutating func run() throws {
-        guard let sessionId = getSession() else { return }
+        guard let sessionId = CRAPIHelper.getSession(unblocked) else { return }
         
         for url in urls {
             if let parsed = CRURLParser.parse(text: url) {
@@ -19,7 +19,7 @@ struct CRDownload: ParsableCommand {
                 if parsed.type == .series, let url = URL(string: url) {
                     print("Getting seiresId from web page")
                     if let seriesId = CRWebParser.seriesId(url) {
-                        if let collections = getCollections(sessionId, seriesId) {
+                        if let collections = CRAPIHelper.getCollections(sessionId, seriesId) {
                             print("\nChoose a colletion:")
                             for (index, collection) in collections.enumerated() {
                                 print("\(index + 1): \(collection.name)")
@@ -31,19 +31,23 @@ struct CRDownload: ParsableCommand {
                                 print("Collection id is invaildate")
                                 continue
                             }
-                            if let episodes = getMedias(sessionId, selectedCollectionId) {
+                            if let episodes = CRAPIHelper.getMedias(sessionId, selectedCollectionId) {
                                 print("\nChoose a episode:")
                                 for (index, episode) in episodes.enumerated() {
                                     print("\(index + 1): \(episode.name ?? "Untitled")")
                                 }
                                 let episodeChoise = UserInteract.chooseNumber(from: 1...episodes.count)
                                 let selectedEpisode = episodes[episodeChoise-1]
-                                print("Getting info from \(episodeChoise): \(selectedEpisode)")
-                                guard let selectedEpisodeId = Int(selectedEpisode.id) else {
+                                print("Getting info from \(episodeChoise): \(selectedEpisode.name ?? "Untitled")")
+                                guard let selectedMediaId = Int(selectedEpisode.id) else {
                                     print("Episode id is invaildate")
                                     continue
                                 }
-                                print(selectedEpisode)
+                                if let stream = CRCommandFlow.getStream(sessionId, selectedMediaId) {
+                                    print("m3u8 is \(stream)")
+                                } else {
+                                    print("Unable to get m3u8 from media_id \(selectedMediaId)")
+                                }
                             }
                         }
                     } else {
@@ -51,11 +55,10 @@ struct CRDownload: ParsableCommand {
                     }
                 } else if parsed.type == .episode {
                     if let mediaId = Int(parsed.matches[4]) {
-                        if let info = getInfo(sessionId, mediaId),
-                           let streamData = info.streamData,
-                           let adaptive = streamData.streams.last(where: { $0.quality == "adaptive" }) ?? streamData.streams.last,
-                           let url = URL(string: adaptive.url) {
-                            print("m3u8 is \(url)")
+                        if let stream = CRCommandFlow.getStream(sessionId, mediaId) {
+                            print("m3u8 is \(stream)")
+                        } else {
+                            print("Unable to get m3u8 from media_id \(mediaId)")
                         }
                     } else {
                         print("Cannot read media_id")
