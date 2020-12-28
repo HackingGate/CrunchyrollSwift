@@ -16,40 +16,25 @@ struct CRDownload: ParsableCommand {
         for url in urls {
             if let parsed = CRURLParser.parse(text: url) {
                 print("\(url) parsed as \(parsed.type)")
-                print(parsed.matches[4])
+                if parsed.type == .series {
+                    
+                } else if parsed.type == .episode {
+                    if let mediaId = Int(parsed.matches[4]) {
+                        if let info = getInfo(sessionId, mediaId),
+                           let streamData = info.streamData,
+                           let adaptive = streamData.streams.last(where: { $0.quality == "adaptive" }) ?? streamData.streams.last,
+                           let url = URL(string: adaptive.url) {
+                            print("m3u8 is \(url)")
+                        }
+                    } else {
+                        print("Cannot read media_id")
+                    }
+                }
             } else {
                 print("\(url) cannot be parsed")
             }
         }
         
         semaphore.signal()
-    }
-}
-
-extension CRDownload {
-    func getSession() -> String? {
-        var sessionId: String?
-        CRAPIService.shared.GET(
-            endpoint: unblocked ? .startUSSession : .startSession,
-            params: nil)
-        {
-            (result: Result<CRAPIResponse<CRAPIStartSession>, CRAPIService.APIError>) in
-            switch result {
-            case let .success(response):
-                if let data = response.data {
-                    print("Got \(data.countryCode ?? "") session_id \(data.id)")
-                    sessionId = data.id
-                } else {
-                    print("No session data")
-                }
-            case let .failure(error):
-                print("Get session failed with error: \(error)")
-                break
-            }
-            semaphore.signal()
-        }
-        // https://stackoverflow.com/a/59684676/4063462
-        _ = semaphore.wait(wallTimeout: .distantFuture)
-        return sessionId
     }
 }
