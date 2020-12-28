@@ -9,7 +9,7 @@ import Foundation
 
 public struct CRURLParser {
     // adapted from https://github.com/simplymemes/crunchyroll-dl/blob/master/index.js
-    static let seriesRegex = "/https?:\\/\\/(?:(www|m)\\.)?(crunchyroll\\.com(\\/[a-z]{2}|\\/[a-z]{2}-[a-z]{2})?\\/([\\w\\-]+))\\/?(?:\\?|$)/"
+    static let seriesRegex = "https?:\\/\\/(?:(www|m)\\.)?(crunchyroll\\.com(\\/[a-z]{2}|\\/[a-z]{2}-[a-z]{2})?\\/([\\w\\-]+))\\/?(?:\\?|$)"
     static let episodeRegex = "https?:\\/\\/(?:(www|m)\\.)?(crunchyroll\\.(?:com|fr)(\\/[a-z]{2}|\\/[a-z]{2}-[a-z]{2})?\\/(?:media(?:-|\\/\\?id=)|[^/]*\\/[^/?&]*?)([0-9]+))(?:[/?&]|$)"
     
     public static func parse(text: String) -> CRURLParsed? {

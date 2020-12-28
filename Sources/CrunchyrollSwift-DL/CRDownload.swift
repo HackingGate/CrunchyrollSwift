@@ -16,8 +16,10 @@ struct CRDownload: ParsableCommand {
         for url in urls {
             if let parsed = CRURLParser.parse(text: url) {
                 print("\(url) parsed as \(parsed.type)")
-                if parsed.type == .series {
-                    
+                if parsed.type == .series, let url = URL(string: url) {
+                    if let seiresId = CRWebParser.seriesId(url) {
+                        print(seiresId)
+                    }
                 } else if parsed.type == .episode {
                     if let mediaId = Int(parsed.matches[4]) {
                         if let info = getInfo(sessionId, mediaId),
