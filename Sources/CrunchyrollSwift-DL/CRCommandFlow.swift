@@ -51,7 +51,7 @@ struct CRCommandFlow {
     static func downloadStream(_ url: URL, name: String) {
         let youtubeDL = shell("which", "youtube-dl")
         if youtubeDL == 0 {
-            _ = shell("youtube-dl", "-o \(name.count > 0 ? name : UUID().uuidString).%(ext)s", "--all-subs", url.absoluteString)
+            _ = shell("youtube-dl", "-o", "\(name.count > 0 ? name : UUID().uuidString).%(ext)s", url.absoluteString)
         } else {
             print("youtube-dl not found")
         }
