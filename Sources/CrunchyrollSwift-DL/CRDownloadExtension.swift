@@ -67,6 +67,39 @@ extension CRDownload {
         return crAPICollections
     }
     
+    func getMedias(
+        _ sessionId: String,
+        _ collectionId: Int,
+        _ fields: [CRAPIMedia.CodingKeys] = [.id, .name]
+    ) -> [CRAPIMedia]? {
+        let params = [
+            "session_id": sessionId,
+            "collection_id": String(collectionId),
+            "fields": fields.map({ "media." + $0.stringValue }).joined(separator: ",")
+        ]
+        
+        var crAPIMedias: [CRAPIMedia]?
+        CRAPIService.shared.GET(
+            endpoint: .listMedia,
+            params: params)
+        {
+            (result: Result<CRAPIResponse<[CRAPIMedia]>, CRAPIService.APIError>) in
+            switch result {
+            case let .success(response):
+                if let data = response.data {
+                    crAPIMedias = data
+                } else {
+                    print("No [CRAPIMedia] data")
+                }
+            case .failure(_):
+                break
+            }
+            semaphore.signal()
+        }
+        _ = semaphore.wait(wallTimeout: .distantFuture)
+        return crAPIMedias
+    }
+    
     func getInfo(
         _ sessionId: String,
         _ mediaId: Int,
