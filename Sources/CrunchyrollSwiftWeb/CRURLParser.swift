@@ -27,16 +27,6 @@ public struct CRURLParser {
     }
 }
 
-// https://stackoverflow.com/a/56616990/4063462
-extension String {
-    func match(_ regex: String) -> [[String]] {
-        let nsString = self as NSString
-        return (try? NSRegularExpression(pattern: regex, options: []))?.matches(in: self, options: [], range: NSMakeRange(0, count)).map { match in
-            (0..<match.numberOfRanges).map { match.range(at: $0).location == NSNotFound ? "" : nsString.substring(with: match.range(at: $0)) }
-        } ?? []
-    }
-}
-
 public struct CRURLParsed {
     public let url: String
     public let type: CRURLType

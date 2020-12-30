@@ -9,6 +9,12 @@ import Foundation
 import Kanna
 
 public struct CRWebParser {
+    public enum ParserError: Error {
+        case cantParseDocument
+        case noDataMatched
+        case jsonDecodingError(error: Error)
+    }
+    
     public static func seriesId(_ url: URL) -> Int? {
         if let doc = try? HTML(url: url, encoding: .utf8) {
             // Search for nodes by CSS
@@ -21,5 +27,33 @@ public struct CRWebParser {
             }
         }
         return nil
+    }
+    
+    static let vilosRegex = "vilos\\.config\\.media = (.*);"
+
+    public static func vilosData(
+        _ url: URL,
+        completionHandler: @escaping (Result<CRWebVilos, ParserError>) -> Void
+    ) {
+        guard let doc = try? HTML(url: url, encoding: .utf8), let text = doc.text else {
+            completionHandler(.failure(.cantParseDocument))
+            return
+        }
+        guard let firstVilosConfigMediaRegexMatched = text.match(vilosRegex).first,
+              firstVilosConfigMediaRegexMatched.count > 0,
+              let jsonData = firstVilosConfigMediaRegexMatched[1].data(using: .utf8)
+        else {
+            completionHandler(.failure(.noDataMatched))
+            return
+        }
+        do {
+            let object = try JSONDecoder().decode(CRWebVilos.self, from: jsonData)
+            completionHandler(.success(object))
+        } catch let error {
+            #if DEBUG
+            print("JSON Decoding Error: \(error)")
+            #endif
+            completionHandler(.failure(.jsonDecodingError(error: error)))
+        }
     }
 }
