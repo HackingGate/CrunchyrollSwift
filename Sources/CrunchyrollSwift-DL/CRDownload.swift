@@ -16,7 +16,7 @@ struct CRDownload: ParsableCommand {
         for url in urls {
             if let parsed = CRURLParser.parse(text: url) {
                 print("\(url) parsed as \(parsed.type)")
-                if parsed.type == .series, let url = URL(string: url) {
+                if parsed.type == .series, let url = URL(string: parsed.url) {
                     print("Getting seiresId from web page")
                     if let seriesId = CRWebParser.seriesId(url) {
                         if let selectedCollection = CRCommandFlow.selectCollection(sessionId, seriesId) {
@@ -29,6 +29,11 @@ struct CRDownload: ParsableCommand {
                                     print("Episode id is invaild")
                                     continue
                                 }
+//                                if let selectedEpisodeURLString = selectedEpisode.url,
+//                                   let selectedEpisodeURL = URL(string: selectedEpisodeURLString),
+//                                   let vilosData = CRWebHelper.getVilosData(url: selectedEpisodeURL) {
+//                                    print(vilosData.streams)
+//                                }
                                 if let info = CRAPIHelper.getInfo(sessionId, selectedMediaId) {
                                     if let stream = CRCommandFlow.getStream(sessionId, info) {
                                         print("m3u8 is \(stream)")
@@ -43,6 +48,11 @@ struct CRDownload: ParsableCommand {
                         print("Unable to get seiresId from web page")
                     }
                 } else if parsed.type == .episode {
+//                    if let url = URL(string: parsed.url) {
+//                        if let vilosData = CRWebHelper.getVilosData(url: url) {
+//                            print(vilosData.streams)
+//                        }
+//                    }
                     if let mediaId = Int(parsed.matches[4]) {
                         if let info = CRAPIHelper.getInfo(sessionId, mediaId) {
                             if let stream = CRCommandFlow.getStream(sessionId, info) {
