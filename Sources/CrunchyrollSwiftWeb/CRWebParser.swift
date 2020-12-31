@@ -39,6 +39,13 @@ public struct CRWebParser {
             completionHandler(.failure(.cantParseDocument))
             return
         }
+        return self.vilosData(text, completionHandler: completionHandler)
+    }
+    
+    public static func vilosData(
+        _ text: String,
+        completionHandler: @escaping (Result<CRWebVilos, ParserError>) -> Void
+    ) {
         guard let firstVilosConfigMediaRegexMatched = text.match(vilosRegex).first,
               firstVilosConfigMediaRegexMatched.count > 0,
               let jsonData = firstVilosConfigMediaRegexMatched[1].data(using: .utf8)

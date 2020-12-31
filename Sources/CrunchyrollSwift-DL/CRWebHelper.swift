@@ -13,7 +13,10 @@ struct CRWebHelper {
         url: URL
     ) -> CRWebVilos? {
         var crWebVilos: CRWebVilos?
-        CRWebParser.vilosData(url)
+        guard let text = Cloudscraper.get(url.absoluteString) else {
+            return crWebVilos
+        }
+        CRWebParser.vilosData(text)
         {
             (result: Result<CRWebVilos, CRWebParser.ParserError>) in
             switch result {
