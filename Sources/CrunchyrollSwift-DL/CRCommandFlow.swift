@@ -7,6 +7,7 @@
 
 import Foundation
 import CrunchyrollSwift
+import CrunchyrollSwiftWeb
 
 struct CRCommandFlow {
     static func selectCollection(_ sessionId: String, _ seriesId: Int) -> CRAPICollection? {
@@ -36,6 +37,18 @@ struct CRCommandFlow {
             return selectedEpisode
         } else {
             return nil
+        }
+    }
+    
+    static func getStreamWithSoftSubs(_ url: URL) -> (CRWebVilosStream?, [CRWebVilosSubtitle]?) {
+        if let vilosData = CRWebHelper.getVilosData(url: url),
+           let streams = vilosData.streams {
+            let filtered = streams.filter { (stream) -> Bool in
+                stream.hardsubLang == nil && stream.format == "adaptive_hls"
+            }
+            return (filtered.first, vilosData.subtitles)
+        } else {
+            return (nil, nil)
         }
     }
     

@@ -13,14 +13,17 @@ public struct CRURLParser {
     static let episodeRegex = "https?:\\/\\/(?:(www|m)\\.)?(crunchyroll\\.(?:com|fr)(\\/[a-z]{2}|\\/[a-z]{2}-[a-z]{2})?\\/(?:media(?:-|\\/\\?id=)|[^/]*\\/[^/?&]*?)([0-9]+))(?:[/?&]|$)"
     
     public static func parse(text: String) -> CRURLParsed? {
-        if let firstSeriesRegexMatched = text.match(seriesRegex).first {
-            if firstSeriesRegexMatched.count > 0 {
-                return CRURLParsed(url: text, type: .series, matches: firstSeriesRegexMatched)
+        if let url = URL(string: text),
+           let name = url.pathComponents.last {
+            if let firstSeriesRegexMatched = text.match(seriesRegex).first {
+                if firstSeriesRegexMatched.count > 0 {
+                    return CRURLParsed(url: url, type: .series, matches: firstSeriesRegexMatched, name: name)
+                }
             }
-        }
-        if let firstEpisodeRegexMatched = text.match(episodeRegex).first {
-            if firstEpisodeRegexMatched.count > 0 {
-                return CRURLParsed(url: text, type: .episode, matches: firstEpisodeRegexMatched)
+            if let firstEpisodeRegexMatched = text.match(episodeRegex).first {
+                if firstEpisodeRegexMatched.count > 0 {
+                    return CRURLParsed(url: url, type: .episode, matches: firstEpisodeRegexMatched, name: name)
+                }
             }
         }
         return nil
@@ -28,9 +31,10 @@ public struct CRURLParser {
 }
 
 public struct CRURLParsed {
-    public let url: String
+    public let url: URL
     public let type: CRURLType
     public let matches: [String]
+    public let name: String
 }
 
 public enum CRURLType {

@@ -14,11 +14,11 @@ struct CRDownload: ParsableCommand {
         guard let sessionId = CRAPIHelper.getSession(unblocked) else { return }
         
         for url in urls {
-            if let parsed = CRURLParser.parse(text: url) {
-                print("\(url) parsed as \(parsed.type)")
-                if parsed.type == .series, let url = URL(string: parsed.url) {
+            if let inputURLParsed = CRURLParser.parse(text: url) {
+                print("\(url) parsed as \(inputURLParsed.type)")
+                if inputURLParsed.type == .series {
                     print("Getting seiresId from web page")
-                    if let seriesId = CRWebParser.seriesId(url) {
+                    if let seriesId = CRWebParser.seriesId(inputURLParsed.url) {
                         if let selectedCollection = CRCommandFlow.selectCollection(sessionId, seriesId) {
                             guard let selectedCollectionId = Int(selectedCollection.id) else {
                                 print("Collection id is invaild")
@@ -29,17 +29,29 @@ struct CRDownload: ParsableCommand {
                                     print("Episode id is invaild")
                                     continue
                                 }
-//                                if let selectedEpisodeURLString = selectedEpisode.url,
-//                                   let selectedEpisodeURL = URL(string: selectedEpisodeURLString),
-//                                   let vilosData = CRWebHelper.getVilosData(url: selectedEpisodeURL) {
-//                                    print(vilosData.streams)
-//                                }
-                                if let info = CRAPIHelper.getInfo(sessionId, selectedMediaId) {
-                                    if let stream = CRCommandFlow.getStream(sessionId, info) {
-                                        print("m3u8 is \(stream)")
-                                        CRCommandFlow.downloadStream(stream, name: "EP\(info.episodeNumber ?? "") - \(info.name ?? "")")
-                                    } else {
-                                        print("Unable to get m3u8 from media_id \(selectedMediaId)")
+                                guard let selectedURL = selectedEpisode.url else {
+                                    print("Episode url not found")
+                                    continue
+                                }
+                                guard let selectedURLParsed = CRURLParser.parse(text: selectedURL),
+                                      selectedURLParsed.type == .episode else {
+                                    print("Episode url cannot parse")
+                                    continue
+                                }
+                                let (stream, subtitles) = CRCommandFlow.getStreamWithSoftSubs(inputURLParsed.url)
+                                if let stream = stream,
+                                   let subtitles = subtitles {
+                                    print(stream)
+                                    print(subtitles)
+                                } else {
+                                    print("Vilos data not found. Downloading hard sub video.")
+                                    if let info = CRAPIHelper.getInfo(sessionId, selectedMediaId) {
+                                        if let stream = CRCommandFlow.getStream(sessionId, info) {
+                                            print("m3u8 is \(stream)")
+                                            CRCommandFlow.downloadStream(stream, name: selectedURLParsed.name)
+                                        } else {
+                                            print("Unable to get m3u8 from media_id \(selectedMediaId)")
+                                        }
                                     }
                                 }
                             }
@@ -47,23 +59,26 @@ struct CRDownload: ParsableCommand {
                     } else {
                         print("Unable to get seiresId from web page")
                     }
-                } else if parsed.type == .episode {
-//                    if let url = URL(string: parsed.url) {
-//                        if let vilosData = CRWebHelper.getVilosData(url: url) {
-//                            print(vilosData.streams)
-//                        }
-//                    }
-                    if let mediaId = Int(parsed.matches[4]) {
-                        if let info = CRAPIHelper.getInfo(sessionId, mediaId) {
-                            if let stream = CRCommandFlow.getStream(sessionId, info) {
-                                print("m3u8 is \(stream)")
-                                CRCommandFlow.downloadStream(stream, name: "EP\(info.episodeNumber ?? "") - \(info.name ?? "")")
-                            } else {
-                                print("Unable to get m3u8 from media_id \(mediaId)")
-                            }
-                        }
+                } else if inputURLParsed.type == .episode {
+                    let (stream, subtitles) = CRCommandFlow.getStreamWithSoftSubs(inputURLParsed.url)
+                    if let stream = stream,
+                       let subtitles = subtitles {
+                        print(stream)
+                        print(subtitles)
                     } else {
-                        print("Cannot read media_id")
+                        print("Vilos stream and subtitles not found. Downloading hard sub stream instead.")
+                        if let mediaId = Int(inputURLParsed.matches[4]) {
+                            if let info = CRAPIHelper.getInfo(sessionId, mediaId) {
+                                if let stream = CRCommandFlow.getStream(sessionId, info) {
+                                    print("m3u8 is \(stream)")
+                                    CRCommandFlow.downloadStream(stream, name: "EP\(info.episodeNumber ?? "") - \(info.name ?? "")")
+                                } else {
+                                    print("Unable to get m3u8 from media_id \(mediaId)")
+                                }
+                            }
+                        } else {
+                            print("Cannot read media_id")
+                        }
                     }
                 }
             } else {
