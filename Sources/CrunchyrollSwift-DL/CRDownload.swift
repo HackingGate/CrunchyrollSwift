@@ -7,6 +7,9 @@ struct CRDownload: ParsableCommand {
     @Option(name: .shortAndLong, help: "Use the USA library of Crunchyroll.")
     var unblocked: Bool = false
     
+    @Option(help: "Foece soft subtitle. (If soft subtitle not avaliable. Will not downlaod)")
+    var softSub: Bool = false
+    
     @Argument(help: "The URLs to download.")
     var urls: [String]
 
@@ -40,15 +43,19 @@ struct CRDownload: ParsableCommand {
                                 }
                                 let (stream, subtitles) = CRCommandFlow.getStreamWithSoftSubs(inputURLParsed.url)
                                 if let stream = stream,
-                                   let subtitles = subtitles {
-                                    print(stream)
-                                    print(subtitles)
-                                } else {
+                                   let subtitles = subtitles,
+                                   let streamURL = URL(string: stream.url) {
+                                    print("m3u8 is \(stream.url)")
+                                    CRCommandFlow.downloadStream(streamURL, name: selectedURLParsed.name)
+                                    for subtitle in subtitles {
+                                        CRCommandFlow.downloadSubtitle(subtitle, name: selectedURLParsed.name)
+                                    }
+                                } else if (!softSub) {
                                     print("Vilos data not found. Downloading hard sub video.")
                                     if let info = CRAPIHelper.getInfo(sessionId, selectedMediaId) {
-                                        if let stream = CRCommandFlow.getStream(sessionId, info) {
-                                            print("m3u8 is \(stream)")
-                                            CRCommandFlow.downloadStream(stream, name: selectedURLParsed.name)
+                                        if let streamURL = CRCommandFlow.getStreamURL(sessionId, info) {
+                                            print("m3u8 is \(streamURL)")
+                                            CRCommandFlow.downloadStream(streamURL, name: selectedURLParsed.name)
                                         } else {
                                             print("Unable to get m3u8 from media_id \(selectedMediaId)")
                                         }
@@ -62,16 +69,20 @@ struct CRDownload: ParsableCommand {
                 } else if inputURLParsed.type == .episode {
                     let (stream, subtitles) = CRCommandFlow.getStreamWithSoftSubs(inputURLParsed.url)
                     if let stream = stream,
-                       let subtitles = subtitles {
-                        print(stream)
-                        print(subtitles)
-                    } else {
+                       let subtitles = subtitles,
+                       let streamURL = URL(string: stream.url) {
+                        print("m3u8 is \(stream.url)")
+                        CRCommandFlow.downloadStream(streamURL, name: inputURLParsed.name)
+                        for subtitle in subtitles {
+                            CRCommandFlow.downloadSubtitle(subtitle, name: inputURLParsed.name)
+                        }
+                    } else if (!softSub) {
                         print("Vilos stream and subtitles not found. Downloading hard sub stream instead.")
                         if let mediaId = Int(inputURLParsed.matches[4]) {
                             if let info = CRAPIHelper.getInfo(sessionId, mediaId) {
-                                if let stream = CRCommandFlow.getStream(sessionId, info) {
+                                if let stream = CRCommandFlow.getStreamURL(sessionId, info) {
                                     print("m3u8 is \(stream)")
-                                    CRCommandFlow.downloadStream(stream, name: "EP\(info.episodeNumber ?? "") - \(info.name ?? "")")
+                                    CRCommandFlow.downloadStream(stream, name: inputURLParsed.name)
                                 } else {
                                     print("Unable to get m3u8 from media_id \(mediaId)")
                                 }

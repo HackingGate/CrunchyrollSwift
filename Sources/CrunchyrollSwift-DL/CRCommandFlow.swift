@@ -52,7 +52,7 @@ struct CRCommandFlow {
         }
     }
     
-    static func getStream(_ sessionId: String, _ info: CRAPIMedia) -> URL? {
+    static func getStreamURL(_ sessionId: String, _ info: CRAPIMedia) -> URL? {
         if let streamData = info.streamData,
            let adaptive = streamData.streams.last(where: { $0.quality == "adaptive" }) ?? streamData.streams.last,
            let url = URL(string: adaptive.url) {
@@ -67,6 +67,15 @@ struct CRCommandFlow {
             _ = shell("youtube-dl", "-o", "\(name.count > 0 ? name : UUID().uuidString).%(ext)s", url.absoluteString)
         } else {
             print("youtube-dl not found")
+        }
+    }
+    
+    static func downloadSubtitle(_ subtitle: CRWebVilosSubtitle, name: String) {
+        let wget = shell("which", "wget")
+        if wget == 0 {
+            _ = shell("wget", "-O", "\(name).\(subtitle.language).\(subtitle.format)", subtitle.url)
+        } else {
+            print("wget not found")
         }
     }
     
