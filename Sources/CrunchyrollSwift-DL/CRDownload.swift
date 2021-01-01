@@ -45,7 +45,7 @@ struct CRDownload: ParsableCommand {
                                     print("Episode url cannot parse")
                                     continue
                                 }
-                                let (stream, subtitles) = CRCommandFlow.getStreamWithSoftSubs(inputURLParsed.url)
+                                let (stream, subtitles) = CRCommandFlow.getStreamWithSoftSubs(selectedURLParsed.url)
                                 if let stream = stream,
                                    let subtitles = subtitles,
                                    let streamURL = URL(string: stream.url) {
