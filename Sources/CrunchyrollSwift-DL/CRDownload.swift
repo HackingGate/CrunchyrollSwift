@@ -49,7 +49,10 @@ struct CRDownload: ParsableCommand {
                                 if let stream = stream,
                                    let subtitles = subtitles,
                                    let streamURL = URL(string: stream.url) {
+                                    #if DEBUG
                                     print("m3u8 is \(stream.url)")
+                                    #endif
+                                    print("Downloading stream and \(subtitles.count) subtitles")
                                     CRCommandFlow.downloadStream(streamURL, name: selectedURLParsed.name)
                                     for subtitle in subtitles {
                                         CRCommandFlow.downloadSubtitle(subtitle, name: selectedURLParsed.name)
@@ -60,7 +63,9 @@ struct CRDownload: ParsableCommand {
                                     print("Vilos data not found. Downloading hard sub video.")
                                     if let info = CRAPIHelper.getInfo(sessionId, selectedMediaId) {
                                         if let streamURL = CRCommandFlow.getStreamURL(sessionId, info) {
-                                            print("m3u8 is \(streamURL)")
+                                            #if DEBUG
+                                            print("m3u8 is \(streamURL.absoluteString)")
+                                            #endif
                                             CRCommandFlow.downloadStream(streamURL, name: selectedURLParsed.name)
                                         } else {
                                             print("Unable to get m3u8 from media_id \(selectedMediaId)")
@@ -77,7 +82,10 @@ struct CRDownload: ParsableCommand {
                     if let stream = stream,
                        let subtitles = subtitles,
                        let streamURL = URL(string: stream.url) {
+                        #if DEBUG
                         print("m3u8 is \(stream.url)")
+                        #endif
+                        print("Downloading stream and \(subtitles.count) subtitles")
                         CRCommandFlow.downloadStream(streamURL, name: inputURLParsed.name)
                         for subtitle in subtitles {
                             CRCommandFlow.downloadSubtitle(subtitle, name: inputURLParsed.name)
@@ -90,7 +98,9 @@ struct CRDownload: ParsableCommand {
                         if let mediaId = Int(inputURLParsed.matches[4]) {
                             if let info = CRAPIHelper.getInfo(sessionId, mediaId) {
                                 if let stream = CRCommandFlow.getStreamURL(sessionId, info) {
-                                    print("m3u8 is \(stream)")
+                                    #if DEBUG
+                                    print("m3u8 is \(stream.absoluteString)")
+                                    #endif
                                     CRCommandFlow.downloadStream(stream, name: inputURLParsed.name)
                                 } else {
                                     print("Unable to get m3u8 from media_id \(mediaId)")

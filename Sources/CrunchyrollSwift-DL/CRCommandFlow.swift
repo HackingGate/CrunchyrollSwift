@@ -64,7 +64,7 @@ struct CRCommandFlow {
     static func downloadStream(_ url: URL, name: String) {
         let youtubeDL = shell("which", "youtube-dl")
         if youtubeDL == 0 {
-            _ = shell("youtube-dl", "-o", "\(name.count > 0 ? name : UUID().uuidString).%(ext)s", url.absoluteString)
+            _ = shell("youtube-dl", "-q", "-o", "\(name.count > 0 ? name : UUID().uuidString).%(ext)s", url.absoluteString)
         } else {
             print("youtube-dl not found")
         }
@@ -73,7 +73,7 @@ struct CRCommandFlow {
     static func downloadSubtitle(_ subtitle: CRWebVilosSubtitle, name: String) {
         let wget = shell("which", "wget")
         if wget == 0 {
-            _ = shell("wget", "-O", "\(name).\(subtitle.language).\(subtitle.format)", subtitle.url)
+            _ = shell("wget", "-nv", "-O", "\(name).\(subtitle.language).\(subtitle.format)", subtitle.url)
         } else {
             print("wget not found")
         }
