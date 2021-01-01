@@ -7,7 +7,6 @@
 
 import Foundation
 import CrunchyrollSwift
-import CrunchyrollSwiftWeb
 
 struct CRAPIHelper {
     static func getSession(
@@ -72,7 +71,7 @@ struct CRAPIHelper {
     static func getMedias(
         _ sessionId: String,
         _ collectionId: Int,
-        _ fields: [CRAPIMedia.CodingKeys] = [.id, .name]
+        _ fields: [CRAPIMedia.CodingKeys] = [.id, .name, .url]
     ) -> [CRAPIMedia]? {
         let params = [
             "session_id": sessionId,
@@ -105,7 +104,7 @@ struct CRAPIHelper {
     static func getInfo(
         _ sessionId: String,
         _ mediaId: Int,
-        _ fields: [CRAPIMedia.CodingKeys] = [.id, .streamData, .name, .episodeNumber]
+        _ fields: [CRAPIMedia.CodingKeys] = [.id, .name, .episodeNumber, .url, .streamData]
     ) -> CRAPIMedia? {
         let params = [
             "session_id": sessionId,
