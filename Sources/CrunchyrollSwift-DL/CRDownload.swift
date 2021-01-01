@@ -7,14 +7,18 @@ struct CRDownload: ParsableCommand {
     @Option(name: .shortAndLong, help: "Use the USA library of Crunchyroll.")
     var unblocked: Bool = false
     
-    @Option(help: "Foece soft subtitle. (If soft subtitle not avaliable. Will not downlaod)")
-    var softSub: Bool = false
+//    @Option(help: "Foece soft subtitle. (If soft subtitle not avaliable. Will not downlaod)")
+//    var softSub: Bool = true
     
     @Argument(help: "The URLs to download.")
     var urls: [String]
 
     mutating func run() throws {
         guard let sessionId = CRAPIHelper.getSession(unblocked) else { return }
+        let success = CRWebParser.setSessionCookie(sessionId)
+        if !success {
+            print("Set session cookie failed.")
+        }
         
         for url in urls {
             if let inputURLParsed = CRURLParser.parse(text: url) {
@@ -50,7 +54,9 @@ struct CRDownload: ParsableCommand {
                                     for subtitle in subtitles {
                                         CRCommandFlow.downloadSubtitle(subtitle, name: selectedURLParsed.name)
                                     }
-                                } else if (!softSub) {
+//                                } else if softSub {
+//                                    CRWebParser.getMediaConfig(mediaId: selectedEpisode.id, mediaURL: selectedURLParsed.url)
+                                } else {
                                     print("Vilos data not found. Downloading hard sub video.")
                                     if let info = CRAPIHelper.getInfo(sessionId, selectedMediaId) {
                                         if let streamURL = CRCommandFlow.getStreamURL(sessionId, info) {
@@ -76,7 +82,10 @@ struct CRDownload: ParsableCommand {
                         for subtitle in subtitles {
                             CRCommandFlow.downloadSubtitle(subtitle, name: inputURLParsed.name)
                         }
-                    } else if (!softSub) {
+//                    } else if softSub {
+//                        CRWebParser.getMediaConfig(mediaId: inputURLParsed.matches[4], mediaURL: inputURLParsed.url)
+//                        _ = semaphore.wait(wallTimeout: .distantFuture)
+                    } else {
                         print("Vilos stream and subtitles not found. Downloading hard sub stream instead.")
                         if let mediaId = Int(inputURLParsed.matches[4]) {
                             if let info = CRAPIHelper.getInfo(sessionId, mediaId) {

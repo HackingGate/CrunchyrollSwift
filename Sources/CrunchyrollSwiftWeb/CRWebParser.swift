@@ -9,6 +9,9 @@ import Foundation
 import Kanna
 
 public struct CRWebParser {
+    static let baseURL = URL(string: "https://www.crunchyroll.com/")!
+    static let baseTLD = ".crunchyroll.com"
+    
     public enum ParserError: Error {
         case cantParseDocument
         case noDataMatched
@@ -61,6 +64,54 @@ public struct CRWebParser {
             print("JSON Decoding Error: \(error)")
             #endif
             completionHandler(.failure(.jsonDecodingError(error: error)))
+        }
+    }
+    
+    // TODO: not yet completed
+    public static func getMediaConfig(
+        mediaId: String,
+        mediaURL: URL
+    ) {
+        let queryURL = baseURL.appendingPathComponent("xml")
+        var components = URLComponents(url: queryURL, resolvingAgainstBaseURL: true)!
+        components.queryItems = [
+            URLQueryItem(name: "req", value: "RpcApiVideoPlayer_GetStandardConfig"),
+            URLQueryItem(name: "media_id", value: mediaId),
+            URLQueryItem(name: "video_format", value: "108"),
+            URLQueryItem(name: "video_quality", value: "80"),
+            URLQueryItem(name: "current_page", value: mediaURL.absoluteString),
+        ]
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard let data = data else {
+                return
+            }
+            guard error == nil else {
+                return
+            }
+            let xml = String(decoding: data, as: UTF8.self)
+            print(xml)
+            let xmlParser = XMLParser(data: data)
+            xmlParser.parse()
+        }
+        task.resume()
+    }
+    
+    public static func setSessionCookie(_ value: String) -> Bool {
+        let cookieProps: [HTTPCookiePropertyKey : String] = [
+            HTTPCookiePropertyKey.domain: baseTLD,
+            HTTPCookiePropertyKey.path: "/",
+            HTTPCookiePropertyKey.name: "session_id",
+            HTTPCookiePropertyKey.value: value,
+            HTTPCookiePropertyKey.secure: "FALSE",
+        ]
+        if let cookie = HTTPCookie(properties: cookieProps) {
+            URLSession.shared.configuration.httpCookieStorage?.setCookie(cookie)
+            return true
+        } else {
+            print("\(cookieProps) is invalid")
+            return false
         }
     }
 }
