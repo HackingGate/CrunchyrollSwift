@@ -105,6 +105,7 @@ public struct CRWebParser {
             HTTPCookiePropertyKey.name: "session_id",
             HTTPCookiePropertyKey.value: value,
             HTTPCookiePropertyKey.secure: "FALSE",
+            HTTPCookiePropertyKey.expires: "session",
         ]
         if let cookie = HTTPCookie(properties: cookieProps) {
             URLSession.shared.configuration.httpCookieStorage?.setCookie(cookie)
