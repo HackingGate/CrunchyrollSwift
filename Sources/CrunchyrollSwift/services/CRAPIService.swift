@@ -74,12 +74,12 @@ public struct CRAPIService {
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard let data = data else {
-                completionHandler(.failure(.noResponse))
+            if let error = error {
+                completionHandler(.failure(.networkError(error: error)))
                 return
             }
-            guard error == nil else {
-                completionHandler(.failure(.networkError(error: error!)))
+            guard let data = data else {
+                completionHandler(.failure(.noResponse))
                 return
             }
             do {

@@ -84,10 +84,10 @@ public struct CRWebParser {
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard let data = data else {
+            guard error == nil else {
                 return
             }
-            guard error == nil else {
+            guard let data = data else {
                 return
             }
             let xml = String(decoding: data, as: UTF8.self)
