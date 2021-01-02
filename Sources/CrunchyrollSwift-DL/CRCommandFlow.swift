@@ -71,12 +71,26 @@ struct CRCommandFlow {
     }
     
     static func downloadSubtitle(_ subtitle: CRWebVilosSubtitle, name: String) {
-        let wget = shell("which", "wget")
-        if wget == 0 {
-            _ = shell("wget", "-nv", "-O", "\(name).\(subtitle.language).\(subtitle.format)", subtitle.url)
-        } else {
-            print("wget not found")
+        guard let url = URL(string: subtitle.url) else {
+            return
         }
+        guard let data = try? Data(contentsOf: url) else {
+            return
+        }
+        let fileName = "\(name).\(subtitle.language).\(subtitle.format)"
+        let fileManager = FileManager.default
+        let path = "file:///\(fileManager.currentDirectoryPath)/\(fileName)"
+        guard let pathURL = URL(string: path) else {
+            print("\(path) is invalid")
+            return
+        }
+        do {
+            try data.write(to: pathURL)
+        } catch {
+            print("Write to \(path) failed")
+            return
+        }
+        print("Downloaded \(fileName)")
     }
     
     static func shell(_ args: String...) -> Int32 {
