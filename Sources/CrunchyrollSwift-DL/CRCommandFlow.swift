@@ -95,9 +95,13 @@ struct CRCommandFlow {
     
     static func shell(_ args: String...) -> Int32 {
         let task = Process()
-        task.launchPath = "/usr/bin/env"
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/env")
         task.arguments = args
-        task.launch()
+        do {
+            try task.run()
+        } catch {
+            print("Unable to run task")
+        }
         task.waitUntilExit()
         return task.terminationStatus
     }

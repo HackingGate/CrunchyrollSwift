@@ -6,6 +6,9 @@
 //
 
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import Kanna
 
 public struct CRWebParser {
@@ -100,8 +103,8 @@ public struct CRWebParser {
             }
             let xml = String(decoding: data, as: UTF8.self)
             print(xml)
-            let xmlParser = XMLParser(data: data)
-            xmlParser.parse()
+//            let xmlParser = XMLParser(data: data)
+//            xmlParser.parse()
         }
         task.resume()
     }
