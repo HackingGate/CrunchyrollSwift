@@ -19,7 +19,15 @@ public struct CRWebParser {
     }
     
     public static func seriesId(_ url: URL) -> Int? {
-        if let doc = try? HTML(url: url, encoding: .utf8) {
+        if let doc = try? HTML(url: url, encoding: .utf8),
+           let html = doc.toHTML {
+            return seriesId(html)
+        }
+        return nil
+    }
+    
+    public static func seriesId(_ text: String) -> Int? {
+        if let doc = try? HTML(html: text, encoding: .utf8) {
             // Search for nodes by CSS
             for node in doc.css("div, class") {
                 if node.className == "show-actions" {

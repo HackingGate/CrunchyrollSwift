@@ -9,9 +9,20 @@ import Foundation
 import CrunchyrollSwiftWeb
 
 struct CRWebHelper {
+    static func getSeriesId(
+        _ url: URL,
+        _ useCloudscraper: Bool = false
+    ) -> Int? {
+        if useCloudscraper, let text = Cloudscraper.get(url.absoluteString) {
+            return CRWebParser.seriesId(text)
+        } else {
+            return CRWebParser.seriesId(url)
+        }
+    }
+    
     static func getVilosData(
-        url: URL,
-        useCloudscraper: Bool = false
+        _ url: URL,
+        _ useCloudscraper: Bool = false
     ) -> CRWebVilos? {
         if useCloudscraper, let text = Cloudscraper.get(url.absoluteString) {
             // Set cookie is not ye supported when using cloudscraper

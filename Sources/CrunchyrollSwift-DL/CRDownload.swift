@@ -10,6 +10,8 @@ struct CRDownload: ParsableCommand {
 //    @Option(help: "Foece soft subtitle. (If soft subtitle not avaliable. Will not downlaod)")
 //    var softSub: Bool = true
     
+    @Option(help: "Use python pip cloudscraper to bypass Cloudflare's anti-bot page.")
+    var useCloudscraper: Bool = false
     @Argument(help: "The URLs to download.")
     var urls: [String]
 
@@ -25,7 +27,7 @@ struct CRDownload: ParsableCommand {
                 print("\(url) parsed as \(inputURLParsed.type)")
                 if inputURLParsed.type == .series {
                     print("Getting seiresId from web page")
-                    if let seriesId = CRWebParser.seriesId(inputURLParsed.url) {
+                    if let seriesId = CRWebHelper.getSeriesId(inputURLParsed.url, useCloudscraper) {
                         if let selectedCollection = CRCommandFlow.selectCollection(sessionId, seriesId) {
                             guard let selectedCollectionId = Int(selectedCollection.id) else {
                                 print("Collection id is invaild")
@@ -45,7 +47,7 @@ struct CRDownload: ParsableCommand {
                                     print("Episode url cannot parse")
                                     continue
                                 }
-                                let (stream, subtitles) = CRCommandFlow.getStreamWithSoftSubs(selectedURLParsed.url)
+                                let (stream, subtitles) = CRCommandFlow.getStreamWithSoftSubs(selectedURLParsed.url, useCloudscraper)
                                 if let stream = stream,
                                    let subtitles = subtitles,
                                    let streamURL = URL(string: stream.url) {
@@ -78,7 +80,7 @@ struct CRDownload: ParsableCommand {
                         print("Unable to get seiresId from web page")
                     }
                 } else if inputURLParsed.type == .episode {
-                    let (stream, subtitles) = CRCommandFlow.getStreamWithSoftSubs(inputURLParsed.url)
+                    let (stream, subtitles) = CRCommandFlow.getStreamWithSoftSubs(inputURLParsed.url, useCloudscraper)
                     if let stream = stream,
                        let subtitles = subtitles,
                        let streamURL = URL(string: stream.url) {
