@@ -8,7 +8,7 @@
 import Foundation
 
 struct UserInteract {
-    public static func chooseNumber(from range: ClosedRange<Int>) -> Int {
+    public static func chooseNumber(from range: Range<Int>) -> Int {
         var validateChoise: Int?
         repeat {
             let keyboard = FileHandle.standardInput
@@ -21,11 +21,11 @@ struct UserInteract {
                 print("Please type a number")
                 continue
             }
-            if (!range.contains(choise)) {
+            if (!range.contains(choise - 1)) {
                 print("Choice is not in range \(range)")
                 continue
             }
-            validateChoise = choise
+            validateChoise = choise - 1
         } while (validateChoise == nil)
         
         return validateChoise!

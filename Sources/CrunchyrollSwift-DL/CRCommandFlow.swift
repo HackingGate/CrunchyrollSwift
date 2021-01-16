@@ -16,9 +16,9 @@ struct CRCommandFlow {
             for (index, collection) in collections.enumerated() {
                 print("\(index + 1): \(collection.name)")
             }
-            let collectionChoise = UserInteract.chooseNumber(from: 1...collections.count)
-            let selectedCollection = collections[collectionChoise-1]
-            print("Getting episodes from \(collectionChoise): \(selectedCollection.name)")
+            let collectionChoise = UserInteract.chooseNumber(from: 0..<collections.count)
+            let selectedCollection = collections[collectionChoise]
+            print("Getting episodes from \(collectionChoise + 1): \(selectedCollection.name)")
             return selectedCollection
         } else {
             return nil
@@ -31,9 +31,9 @@ struct CRCommandFlow {
             for (index, episode) in episodes.enumerated() {
                 print("\(index + 1): \(episode.name ?? "Untitled")")
             }
-            let episodeChoise = UserInteract.chooseNumber(from: 1...episodes.count)
-            let selectedEpisode = episodes[episodeChoise-1]
-            print("Getting info from \(episodeChoise): \(selectedEpisode.name ?? "Untitled")")
+            let episodeChoise = UserInteract.chooseNumber(from: 0..<episodes.count)
+            let selectedEpisode = episodes[episodeChoise]
+            print("Getting info from \(episodeChoise + 1): \(selectedEpisode.name ?? "Untitled")")
             return selectedEpisode
         } else {
             return nil
