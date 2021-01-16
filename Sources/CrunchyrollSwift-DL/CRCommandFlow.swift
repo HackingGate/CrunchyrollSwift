@@ -64,7 +64,7 @@ struct CRCommandFlow {
     static func downloadStream(_ url: URL, name: String) {
         let youtubeDL = shell("which", "youtube-dl")
         if youtubeDL == 0 {
-            _ = shell("youtube-dl", "-q", "-o", "\(name.count > 0 ? name : UUID().uuidString).%(ext)s", url.absoluteString)
+            shell("youtube-dl", "-q", "-o", "\(name.count > 0 ? name : UUID().uuidString).%(ext)s", url.absoluteString)
         } else {
             print("youtube-dl not found")
         }
@@ -93,6 +93,7 @@ struct CRCommandFlow {
         print("Downloaded \(fileName)")
     }
     
+    @discardableResult
     static func shell(_ args: String...) -> Int32 {
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/usr/bin/env")
@@ -103,6 +104,7 @@ struct CRCommandFlow {
             print("Unable to run task")
         }
         task.waitUntilExit()
+        // TODO: Add DispatchSource.makeSignalSource to handle UNIX signals
         return task.terminationStatus
     }
 }
