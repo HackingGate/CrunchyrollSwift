@@ -31,7 +31,7 @@ let package = Package(
             from: "5.2.4"),
         .package(
             url: "https://github.com/apple/swift-argument-parser",
-            from: "0.3.0"),
+            from: "0.4.3"),
         .package(
             url: "https://github.com/pvieito/PythonKit.git",
             .branch("master")),
