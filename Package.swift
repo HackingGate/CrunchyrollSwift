@@ -28,7 +28,7 @@ let package = Package(
         // .package(url: /* package url */, from: "1.0.0"),
         .package(
             url: "https://github.com/tid-kijyun/Kanna",
-            from: "5.2.0"),
+            from: "5.2.4"),
         .package(
             url: "https://github.com/apple/swift-argument-parser",
             from: "0.3.0"),
