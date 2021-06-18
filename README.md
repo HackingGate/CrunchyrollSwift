@@ -1,4 +1,5 @@
 # CrunchyrollSwift
+[![SwiftLint](https://github.com/HackingGate/CrunchyrollSwift/actions/workflows/swiftlint.yml/badge.svg)](https://github.com/HackingGate/CrunchyrollSwift/actions/workflows/swiftlint.yml)
 
 Crunchyroll Swift wrapper unofficial
 
