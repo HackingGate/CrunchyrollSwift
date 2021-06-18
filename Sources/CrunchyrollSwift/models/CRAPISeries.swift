@@ -17,7 +17,7 @@ public struct CRAPISeries: Codable, Identifiable {
     public let landscapeImage: CRAPIImage
     public let portraitImage: CRAPIImage
     public let description: String
-    
+
     enum CodingKeys: String, CodingKey {
         case `class` = "class"
         case id = "series_id"

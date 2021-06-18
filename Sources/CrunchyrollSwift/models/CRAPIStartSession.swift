@@ -13,7 +13,7 @@ public struct CRAPIStartSession: Codable, Identifiable {
     public let ip: String?
     public let deviceType: String?
     public let deviceId: String?
-    
+
     enum CodingKeys: String, CodingKey {
         case id = "session_id"
         case countryCode = "country_code"

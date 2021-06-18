@@ -24,7 +24,7 @@ struct CRCommandFlow {
             return nil
         }
     }
-    
+
     static func selectEpisode(_ sessionId: String, _ collectionId: Int) -> CRAPIMedia? {
         if let episodes = CRAPIHelper.getMedias(sessionId, collectionId) {
             print("\nChoose a episode:")
@@ -39,7 +39,7 @@ struct CRCommandFlow {
             return nil
         }
     }
-    
+
     static func getStreamWithSoftSubs(_ url: URL, _ useCloudscraper: Bool) -> (CRWebVilosStream?, [CRWebVilosSubtitle]?) {
         if let vilosData = CRWebHelper.getVilosData(url, useCloudscraper),
            let streams = vilosData.streams {
@@ -51,7 +51,7 @@ struct CRCommandFlow {
             return (nil, nil)
         }
     }
-    
+
     static func getStreamURL(_ sessionId: String, _ info: CRAPIMedia) -> URL? {
         if let streamData = info.streamData,
            let adaptive = streamData.streams.last(where: { $0.quality == "adaptive" }) ?? streamData.streams.last,
@@ -60,7 +60,7 @@ struct CRCommandFlow {
         }
         return nil
     }
-    
+
     static func downloadStream(_ url: URL, name: String) {
         let youtubeDL = shell("which", "youtube-dl")
         if youtubeDL == 0 {
@@ -69,7 +69,7 @@ struct CRCommandFlow {
             print("youtube-dl not found")
         }
     }
-    
+
     static func downloadSubtitle(_ subtitle: CRWebVilosSubtitle, name: String) {
         guard let url = URL(string: subtitle.url) else {
             return
@@ -92,7 +92,7 @@ struct CRCommandFlow {
         }
         print("Downloaded \(fileName)")
     }
-    
+
     @discardableResult
     static func shell(_ args: String...) -> Int32 {
         let task = Process()

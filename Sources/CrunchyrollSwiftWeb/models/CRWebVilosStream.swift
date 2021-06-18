@@ -13,7 +13,7 @@ public struct CRWebVilosStream: Codable {
     public let hardsubLang: String?
     public let url: String
     public let resolution: String
-    
+
     enum CodingKeys: String, CodingKey {
         case format = "format"
         case audioLang = "audio_lang"

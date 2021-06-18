@@ -19,7 +19,6 @@ public struct CRWebVilosMetadata: Codable, Identifiable {
     public let upNext: CRWebVilosUpNext?
     public let duration: Int?
 
-    
     enum CodingKeys: String, CodingKey {
         case id = "id"
         case seriesId = "series_id"

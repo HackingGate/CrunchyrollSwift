@@ -14,13 +14,13 @@ import Kanna
 public struct CRWebParser {
     static let baseURL = URL(string: "https://www.crunchyroll.com/")!
     static let baseTLD = ".crunchyroll.com"
-    
+
     public enum ParserError: Error {
         case cantParseDocument
         case noDataMatched
         case jsonDecodingError(error: Error)
     }
-    
+
     public static func seriesId(_ url: URL) -> Int? {
         if let doc = try? HTML(url: url, encoding: .utf8),
            let html = doc.toHTML {
@@ -28,7 +28,7 @@ public struct CRWebParser {
         }
         return nil
     }
-    
+
     public static func seriesId(_ text: String) -> Int? {
         if let doc = try? HTML(html: text, encoding: .utf8) {
             // Search for nodes by CSS
@@ -42,7 +42,7 @@ public struct CRWebParser {
         }
         return nil
     }
-    
+
     static let vilosRegex = "vilos\\.config\\.media = (.*);"
 
     public static func vilosData(
@@ -55,7 +55,7 @@ public struct CRWebParser {
         }
         return self.vilosData(text, completionHandler: completionHandler)
     }
-    
+
     public static func vilosData(
         _ text: String,
         completionHandler: @escaping (Result<CRWebVilos, ParserError>) -> Void
@@ -77,7 +77,7 @@ public struct CRWebParser {
             completionHandler(.failure(.jsonDecodingError(error: error)))
         }
     }
-    
+
     // TODO: not yet completed
     public static func getMediaConfig(
         mediaId: String,
@@ -90,11 +90,11 @@ public struct CRWebParser {
             URLQueryItem(name: "media_id", value: mediaId),
             URLQueryItem(name: "video_format", value: "108"),
             URLQueryItem(name: "video_quality", value: "80"),
-            URLQueryItem(name: "current_page", value: mediaURL.absoluteString),
+            URLQueryItem(name: "current_page", value: mediaURL.absoluteString)
         ]
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             guard error == nil else {
                 return
             }
@@ -108,15 +108,15 @@ public struct CRWebParser {
         }
         task.resume()
     }
-    
+
     public static func setSessionCookie(_ value: String) -> Bool {
-        let cookieProps: [HTTPCookiePropertyKey : String] = [
+        let cookieProps: [HTTPCookiePropertyKey: String] = [
             HTTPCookiePropertyKey.domain: baseTLD,
             HTTPCookiePropertyKey.path: "/",
             HTTPCookiePropertyKey.name: "session_id",
             HTTPCookiePropertyKey.value: value,
             HTTPCookiePropertyKey.secure: "FALSE",
-            HTTPCookiePropertyKey.expires: "session",
+            HTTPCookiePropertyKey.expires: "session"
         ]
         if let cookie = HTTPCookie(properties: cookieProps) {
             URLSession.shared.configuration.httpCookieStorage?.setCookie(cookie)

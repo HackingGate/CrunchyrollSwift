@@ -9,7 +9,7 @@ let package = Package(
         .iOS(.v11),
         .macOS(.v10_13),
         .tvOS(.v11),
-        .watchOS(.v4),
+        .watchOS(.v4)
     ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
@@ -21,7 +21,7 @@ let package = Package(
             targets: ["CrunchyrollSwiftWeb"]),
         .executable(
             name: "crunchyrollswift-dl",
-            targets: ["CrunchyrollSwift-DL"]),
+            targets: ["CrunchyrollSwift-DL"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -34,7 +34,7 @@ let package = Package(
             from: "0.4.3"),
         .package(
             url: "https://github.com/pvieito/PythonKit.git",
-            .branch("master")),
+            .branch("master"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -55,11 +55,11 @@ let package = Package(
                     package: "swift-argument-parser"),
                 "CrunchyrollSwift",
                 "CrunchyrollSwiftWeb",
-                "PythonKit",
+                "PythonKit"
             ],
             path: "Sources/CrunchyrollSwift-DL"),
         .testTarget(
             name: "CrunchyrollSwiftTests",
-            dependencies: ["CrunchyrollSwift"]),
+            dependencies: ["CrunchyrollSwift"])
     ]
 )
