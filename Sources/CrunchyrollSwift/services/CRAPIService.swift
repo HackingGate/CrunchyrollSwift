@@ -47,22 +47,22 @@ public struct CRAPIService {
             : baseURL.appendingPathComponent(endpoint.path())
         var components = URLComponents(url: queryURL, resolvingAgainstBaseURL: true)!
         if endpoint == .startUSSession {
-            
+
         } else {
             components.queryItems = [
                 URLQueryItem(name: "locale", value: "enUS"),
-                URLQueryItem(name: "version", value: "2.6.0"),
+                URLQueryItem(name: "version", value: "2.6.0")
             ]
             if endpoint == .startSession {
                 components.queryItems! += [
                     URLQueryItem(name: "access_token", value: "WveH9VkPLrXvuNm"),
                     URLQueryItem(name: "device_type", value: "com.crunchyroll.crunchyroid"),
-                    URLQueryItem(name: "device_id", value: UUID().uuidString),
+                    URLQueryItem(name: "device_id", value: UUID().uuidString)
                 ]
             } else {
                 components.queryItems! += [
                     URLQueryItem(name: "limit", value: "1000"),
-                    URLQueryItem(name: "offset", value: "0"),
+                    URLQueryItem(name: "offset", value: "0")
                 ]
             }
         }
@@ -73,7 +73,7 @@ public struct CRAPIService {
         }
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             if let error = error {
                 completionHandler(.failure(.networkError(error: error)))
                 return

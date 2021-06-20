@@ -19,7 +19,7 @@ struct CRWebHelper {
             return CRWebParser.seriesId(url)
         }
     }
-    
+
     static func getVilosData(
         _ url: URL,
         _ useCloudscraper: Bool = false
@@ -31,13 +31,12 @@ struct CRWebHelper {
             return self.getVilosData(url: url)
         }
     }
-    
+
     static func getVilosData(
         url: URL
     ) -> CRWebVilos? {
         var crWebVilos: CRWebVilos?
-        CRWebParser.vilosData(url)
-        {
+        CRWebParser.vilosData(url) {
             (result: Result<CRWebVilos, CRWebParser.ParserError>) in
             switch result {
             case let .success(response):
@@ -51,13 +50,12 @@ struct CRWebHelper {
         _ = semaphore.wait(wallTimeout: .distantFuture)
         return crWebVilos
     }
-    
+
     static func getVilosData(
         text: String
     ) -> CRWebVilos? {
         var crWebVilos: CRWebVilos?
-        CRWebParser.vilosData(text)
-        {
+        CRWebParser.vilosData(text) {
             (result: Result<CRWebVilos, CRWebParser.ParserError>) in
             switch result {
             case let .success(response):

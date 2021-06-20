@@ -1,3 +1,5 @@
+// swiftlint:disable cyclomatic_complexity
+
 import Foundation
 import ArgumentParser
 import CrunchyrollSwift
@@ -6,10 +8,10 @@ import CrunchyrollSwiftWeb
 struct CRDownload: ParsableCommand {
     @Option(name: .shortAndLong, help: "Use the USA library of Crunchyroll.")
     var unblocked: Bool = false
-    
+
 //    @Option(help: "Foece soft subtitle. (If soft subtitle not avaliable. Will not downlaod)")
 //    var softSub: Bool = true
-    
+
     @Option(help: "Use python pip cloudscraper to bypass Cloudflare's anti-bot page.")
     var useCloudscraper: Bool = false
     @Argument(help: "The URLs to download.")
@@ -21,7 +23,7 @@ struct CRDownload: ParsableCommand {
         if !success {
             print("Set session cookie failed.")
         }
-        
+
         for url in urls {
             if let inputURLParsed = CRURLParser.parse(text: url) {
                 print("\(url) parsed as \(inputURLParsed.type)")
@@ -117,7 +119,7 @@ struct CRDownload: ParsableCommand {
                 print("\(url) cannot be parsed")
             }
         }
-        
+
         semaphore.signal()
     }
 }

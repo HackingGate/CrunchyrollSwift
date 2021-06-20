@@ -16,5 +16,9 @@ public struct CRAPIResponse<T: Codable>: Codable {
 }
 
 public struct CRAPIDebug: Codable {
-    public let to_data: Double
+    public let toData: Double
+
+    public enum CodingKeys: String, CodingKey {
+        case toData = "to_data"
+    }
 }

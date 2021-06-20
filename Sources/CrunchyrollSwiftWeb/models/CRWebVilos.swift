@@ -14,7 +14,7 @@ public struct CRWebVilos: Codable {
     public let adBreaks: [CRWebVilosAdBreak]?
     public let subtitles: [CRWebVilosSubtitle]?
     public let preview: CRWebVilosPreview?
-    
+
     enum CodingKeys: String, CodingKey {
         case metadata = "metadata"
         case thumbnail = "thumbnail"

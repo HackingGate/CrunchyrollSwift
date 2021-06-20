@@ -21,13 +21,13 @@ struct UserInteract {
                 print("Please type a number")
                 continue
             }
-            if (!range.contains(choise - 1)) {
+            if !range.contains(choise - 1) {
                 print("Choice is not in range \(range)")
                 continue
             }
             validateChoise = choise - 1
         } while (validateChoise == nil)
-        
+
         return validateChoise!
     }
 }
