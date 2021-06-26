@@ -1,10 +1,3 @@
-//
-//  CRAPICollection.swift
-//  MyAnimeList
-//
-//  Created by HG on 2020/08/02.
-//
-
 import Foundation
 
 public struct CRAPICollection: Codable, Identifiable {

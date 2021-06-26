@@ -1,18 +1,9 @@
-//
-//  CRAPIService.swift
-//  MyAnimeList
-//
-//  Created by HG on 2020/07/11.
-//
-
 import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
 
 public struct CRAPIService {
-    let baseURL = URL(string: "https://api.crunchyroll.com/")!
-    let crUnblockerURL = URL(string: "https://cr-unblocker.us.to")!
     public static let shared = CRAPIService()
     let decoder = JSONDecoder()
     public enum APIError: Error {
@@ -20,31 +11,36 @@ public struct CRAPIService {
         case jsonDecodingError(error: Error)
         case networkError(error: Error)
     }
-    public enum Endpoint {
-        case startSession, startUSSession, autocomplete, listCollections, listMedia, info
-        func path() -> String {
-            switch self {
-            case .startSession:
-                return "start_session.0.json"
-            case .startUSSession:
-                return "start_session"
-            case .autocomplete:
-                return "autocomplete.0.json"
-            case .listCollections:
-                return "list_collections.0.json"
-            case .listMedia:
-                return "list_media.0.json"
-            case .info:
-                return "info.0.json"
-            }
-        }
-    }
     public func GET<T: Codable>(endpoint: Endpoint,
                          params: [String: String]?,
                          completionHandler: @escaping (Result<T, APIError>) -> Void) {
+        let request = buildRequest(endpoint, params: params)
+        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
+            if let error = error {
+                completionHandler(.failure(.networkError(error: error)))
+                return
+            }
+            guard let data = data else {
+                completionHandler(.failure(.noResponse))
+                return
+            }
+            do {
+                let object = try self.decoder.decode(T.self, from: data)
+                completionHandler(.success(object))
+            } catch let error {
+                #if DEBUG
+                print("JSON Decoding Error: \(error)")
+                #endif
+                completionHandler(.failure(.jsonDecodingError(error: error)))
+            }
+        }
+        task.resume()
+    }
+
+    private func buildRequest(_ endpoint: Endpoint, params: [String: String]?) -> URLRequest {
         let queryURL = endpoint == .startUSSession
-            ? crUnblockerURL.appendingPathComponent(endpoint.path())
-            : baseURL.appendingPathComponent(endpoint.path())
+            ? Constants.CR_UNBLOCKER_URL.appendingPathComponent(endpoint.path())
+            : Constants.BASE_URL.appendingPathComponent(endpoint.path())
         var components = URLComponents(url: queryURL, resolvingAgainstBaseURL: true)!
         if endpoint == .startUSSession {
 
@@ -73,25 +69,6 @@ public struct CRAPIService {
         }
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
-        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            if let error = error {
-                completionHandler(.failure(.networkError(error: error)))
-                return
-            }
-            guard let data = data else {
-                completionHandler(.failure(.noResponse))
-                return
-            }
-            do {
-                let object = try self.decoder.decode(T.self, from: data)
-                completionHandler(.success(object))
-            } catch let error {
-                #if DEBUG
-                print("JSON Decoding Error: \(error)")
-                #endif
-                completionHandler(.failure(.jsonDecodingError(error: error)))
-            }
-        }
-        task.resume()
+        return request
     }
 }

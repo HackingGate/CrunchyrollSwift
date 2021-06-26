@@ -1,10 +1,3 @@
-//
-//  CRAPIImage.swift
-//  
-//
-//  Created by HG on 2020/12/14.
-//
-
 import Foundation
 
 public struct CRAPIImage: Codable {

@@ -1,10 +1,3 @@
-//
-//  CRUnblockerStartSession.swift
-//  MyAnimeList
-//
-//  Created by HG on 2020/08/06.
-//
-
 import Foundation
 
 public struct CRAPIStartSession: Codable, Identifiable {

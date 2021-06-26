@@ -1,10 +1,3 @@
-//
-//  CRAPISeries.swift
-//
-//
-//  Created by HG on 2020/12/22.
-//
-
 import Foundation
 
 public struct CRAPISeries: Codable, Identifiable {
