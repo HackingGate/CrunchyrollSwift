@@ -24,7 +24,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/tid-kijyun/Kanna",
-            from: "5.2.4"),
+            from: "5.2.5"),
         .package(
             url: "https://github.com/apple/swift-argument-parser",
             from: "0.4.3"),
