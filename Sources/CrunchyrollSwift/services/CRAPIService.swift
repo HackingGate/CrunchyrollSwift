@@ -39,8 +39,8 @@ public struct CRAPIService {
 
     private func buildRequest(_ endpoint: Endpoint, params: [String: String]?) -> URLRequest {
         let queryURL = endpoint == .startUSSession
-            ? Constants.CR_UNBLOCKER_URL.appendingPathComponent(endpoint.path())
-            : Constants.BASE_URL.appendingPathComponent(endpoint.path())
+            ? Constants.crUnblockerURL.appendingPathComponent(endpoint.path())
+            : Constants.BaseURL.appendingPathComponent(endpoint.path())
         var components = URLComponents(url: queryURL, resolvingAgainstBaseURL: true)!
         if endpoint == .startUSSession {
 
